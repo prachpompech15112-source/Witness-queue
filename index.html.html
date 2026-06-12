@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คิวงานนอกสถานที่</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f5f3;
+    --surface: #ffffff;
+    --border: #e4e4e0;
+    --border-mid: #d0d0cb;
+    --text: #1a1a18;
+    --text-muted: #6b6b67;
+    --text-hint: #9b9b96;
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-mid: #9FE1CB;
+    --green-dark: #085041;
+    --green-deep: #0F6E56;
+    --red: #E24B4A;
+    --red-light: #FCEBEB;
+    --amber: #EF9F27;
+    --amber-light: #FAEEDA;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+  .container { max-width: 640px; margin: 0 auto; padding: 20px 16px 48px; }
+  header { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  header h1 i { color: var(--green); font-size: 20px; }
+  .sync-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); background: var(--surface); border: 0.5px solid var(--border); border-radius: 20px; padding: 4px 10px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
+  .dot.ok { background: var(--green); }
+  .dot.err { background: var(--red); }
+  .dot.loading { background: var(--amber); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .card-title i { font-size: 15px; }
+  .queue-row { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); margin-bottom: 6px; background: var(--bg); }
+  .queue-row:last-child { margin-bottom: 0; }
+  .queue-row.next { border: 1.5px solid var(--green); background: var(--green-light); }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .av-b { background: #CECBF6; color: #26215C; }
+  .av-be { background: #9FE1CB; color: #04342C; }
+  .av-a { background: #FAC775; color: #412402; }
+  .av-f { background: #F4C0D1; color: #4B1528; }
+  .emp-name { flex: 1; font-size: 14px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; }
+  .badge-next { background: var(--green-mid); color: var(--green-dark); }
+  .badge-num { background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .form-group input { font-size: 14px; padding: 8px 11px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-mid); background: var(--bg); color: var(--text); width: 100%; outline: none; transition: border-color 0.15s; }
+  .form-group input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.1); }
+  .btn { display: inline-flex; align-items: center; gap: 7px; border-radius: var(--radius-sm); padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-green:hover { opacity: 0.9; }
+  .btn-ghost { background: none; border: 0.5px solid var(--border-mid); color: var(--text-muted); }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-danger { background: var(--red-light); border: 0.5px solid #F7C1C1; color: var(--red); }
+  .btn-danger:hover { background: #F7C1C1; }
+  .result-card { background: var(--green-light); border: 0.5px solid var(--green-mid); border-radius: var(--radius-sm); padding: 12px 14px; display: none; align-items: center; gap: 12px; margin-top: 12px; }
+  .result-name { font-size: 20px; font-weight: 600; color: var(--green-dark); }
+  .result-sub { font-size: 12px; color: var(--green-deep); margin-top: 2px; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .cal-nav { display: flex; align-items: center; gap: 6px; }
+  .cal-nav button { background: none; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 10px; cursor: pointer; color: var(--text); font-size: 13px; }
+  .cal-nav button:hover { background: var(--bg); }
+  .cal-month { font-size: 15px; font-weight: 600; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-day-label { text-align: center; font-size: 11px; color: var(--text-hint); padding: 4px 0; font-weight: 500; }
+  .cal-cell { min-height: 54px; border-radius: var(--radius-sm); padding: 4px 5px; border: 0.5px solid transparent; }
+  .cal-cell.has-event { background: var(--green-light); border-color: var(--green-mid); }
+  .cal-cell.today { border-color: var(--green); border-width: 1.5px; }
+  .cal-cell.other-month { opacity: 0.3; }
+  .cal-date { font-size: 11px; color: var(--text-hint); }
+  .cal-person { font-size: 10px; color: var(--green-deep); font-weight: 600; margin-top: 2px; }
+  .cal-event { font-size: 10px; color: var(--green-dark); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .history-list { max-height: 260px; overflow-y: auto; }
+  .hist-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+  .hist-item:last-child { border-bottom: none; }
+  .hist-date { color: var(--text-muted); min-width: 95px; }
+  .hist-loc { flex: 1; }
+  .hist-person { font-weight: 600; min-width: 40px; text-align: right; }
+  .tag { font-size: 11px; padding: 2px 6px; border-radius: 10px; background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
+  .av-sm { width: 26px; height: 26px; font-size: 10px; flex-shrink: 0; }
+  .btn-icon { background: none; border: none; cursor: pointer; color: var(--text-hint); padding: 4px 6px; border-radius: var(--radius-sm); font-size: 15px; display: flex; align-items: center; }
+  .btn-icon:hover { background: var(--red-light); color: var(--red); }
+  .empty { text-align: center; color: var(--text-hint); font-size: 13px; padding: 1.5rem 0; }
+
+  /* Modal */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+  .modal { background: var(--surface); border-radius: var(--radius); padding: 20px; width: 100%; max-width: 380px; border: 0.5px solid var(--border); }
+  .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+  .modal-job-info { background: var(--bg); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 16px; font-size: 13px; }
+  .modal-job-info strong { display: block; font-size: 14px; margin-bottom: 2px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .swap-options { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .swap-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); cursor: pointer; background: var(--bg); transition: border-color 0.15s; }
+  .swap-option:hover { border-color: var(--green); background: var(--green-light); }
+  .swap-option.selected { border: 1.5px solid var(--green); background: var(--green-light); }
+  .swap-option-name { font-size: 14px; font-weight: 500; flex: 1; }
+  .swap-option-badge { font-size: 11px; color: var(--text-muted); }
+
+  @media (max-width: 480px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .hist-date { min-width: 80px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1><i class="ti ti-map-pin"></i>คิวงานนอกสถานที่</h1>
+    <div class="sync-pill">
+      <div class="dot loading" id="sync-dot"></div>
+      <span id="sync-label">กำลังเชื่อมต่อ...</span>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-list-numbers"></i>ลำดับคิว</div>
+    <div id="queue-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-plus"></i>เพิ่มงานนอกสถานที่</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>สถานที่</label>
+        <input type="text" id="inp-loc" placeholder="เช่น การไฟฟ้าเขต X">
+      </div>
+      <div class="form-group">
+        <label>วันที่</label>
+        <input type="date" id="inp-date">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label>หมายเหตุ (ถ้ามี)</label>
+      <input type="text" id="inp-note" placeholder="เช่น ทดสอบหม้อแปลง 500 kVA">
+    </div>
+    <button class="btn btn-green" id="btn-submit" onclick="addJob()">
+      <i class="ti ti-plus"></i>บันทึกและมอบหมายงาน
+    </button>
+    <div class="result-card" id="result-card">
+      <div id="result-avatar" class="avatar" style="width:44px;height:44px;font-size:16px"></div>
+      <div>
+        <div class="result-name" id="result-name"></div>
+        <div class="result-sub" id="result-sub"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cal-header">
+      <div class="card-title" style="margin:0"><i class="ti ti-calendar"></i>ปฏิทินงาน</div>
+      <div class="cal-nav">
+        <button onclick="changeMonth(-1)"><i class="ti ti-chevron-left"></i></button>
+        <span class="cal-month" id="cal-month-label"></span>
+        <button onclick="changeMonth(1)"><i class="ti ti-chevron-right"></i></button>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-clock-history"></i>ประวัติงาน</div>
+    <div class="history-list" id="history-list"></div>
+  </div>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="modal-backdrop" id="modal-delete" style="display:none">
+  <div class="modal">
+    <h3>ยืนยันการลบงาน</h3>
+    <p>เลือกว่าจะจัดการคิวอย่างไรหลังลบ</p>
+    <div class="modal-job-info" id="modal-job-info"></div>
+    <div class="swap-options" id="swap-options"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn btn-danger" onclick="confirmDelete()"><i class="ti ti-trash"></i>ลบและอัพเดทคิว</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbxhnmblrj13VHqT8wGRx1wvIOA9tDJsiqkiB96-APm6tCTYlfIkylypWipdnpYCXgwv9Q/exec';
+
+const EMPLOYEES = [
+  {id:'boon', name:'Boon', av:'B', cls:'av-b'},
+  {id:'beer', name:'Beer', av:'Be', cls:'av-be'},
+  {id:'autt', name:'Autt', av:'A', cls:'av-a'},
+  {id:'folk', name:'Folk', av:'F', cls:'av-f'},
+];
+
+let state = {queueIndex: 0, jobs: []};
+let calYear, calMonth;
+let pendingDelete = null;
+let selectedSwapIndex = null;
+
+async function fetchAll() {
+  setSyncState('loading', 'กำลังโหลด...');
+  try {
+    const res = await fetch(API_URL + '?action=getAll');
+    const data = await res.json();
+    state.jobs = data.jobs || [];
+    state.queueIndex = data.queueIndex || 0;
+    setSyncState('ok', 'ซิงค์แล้ว · ' + new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}));
+    renderAll();
+  } catch(e) {
+    setSyncState('err', 'เชื่อมต่อไม่ได้');
+  }
+}
+
+function setSyncState(s, msg) {
+  document.getElementById('sync-dot').className = 'dot ' + s;
+  document.getElementById('sync-label').textContent = msg;
+}
+
+async function addJob() {
+  const loc = document.getElementById('inp-loc').value.trim();
+  const date = document.getElementById('inp-date').value;
+  const note = document.getElementById('inp-note').value.trim();
+  if (!loc || !date) { alert('กรุณากรอกสถานที่และวันที่'); return; }
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader"></i>กำลังบันทึก...';
+  setSyncState('loading', 'กำลังบันทึก...');
+  const emp = EMPLOYEES[state.queueIndex % 4];
+  try {
+    const res = await fetch(API_URL + '?action=addJob', {
+      method: 'POST',
+      body: JSON.stringify({id: Date.now(), date, location: loc, note})
+    });
+    const data = await res.json();
+    if (data.success) {
+      const rc = document.getElementById('result-card');
+      rc.style.display = 'flex';
+      document.getElementById('result-name').textContent = emp.name;
+      document.getElementById('result-sub').textContent = formatDate(date) + ' · ' + loc + (note ? ' · ' + note : '');
+      const av = document.getElementById('result-avatar');
+      av.className = 'avatar ' + emp.cls;
+      av.textContent = emp.av;
+      document.getElementById('inp-loc').value = '';
+      document.getElementById('inp-note').value = '';
+      await fetchAll();
+    }
+  } catch(e) {
+    setSyncState('err', 'บันทึกไม่สำเร็จ');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-plus"></i>บันทึกและมอบหมายงาน';
+}
+
+function openDeleteModal(jobId) {
+  const job = state.jobs.find(j => String(j.id) === String(jobId));
+  if (!job) return;
+  pendingDelete = job;
+  selectedSwapIndex = null;
+
+  // Find original index of deleted person
+  const deletedEmpIndex = EMPLOYEES.findIndex(e => e.name === job.employeeName);
+
+  document.getElementById('modal-job-info').innerHTML = `
+    <strong>${job.location}</strong>
+    ${formatDate(job.date)} · ${job.employeeName}${job.note ? ' · ' + job.note : ''}
+  `;
+
+  // Build swap options — who should be next after delete
+  const opts = document.getElementById('swap-options');
+  opts.innerHTML = '<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">คิวถัดไปหลังลบงานนี้ควรเป็นใคร?</div>';
+
+  EMPLOYEES.forEach((emp, idx) => {
+    const div = document.createElement('div');
+    div.className = 'swap-option' + (idx === deletedEmpIndex ? ' selected' : '');
+    if (idx === deletedEmpIndex) selectedSwapIndex = idx;
+    div.onclick = () => {
+      document.querySelectorAll('.swap-option').forEach(el => el.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedSwapIndex = idx;
+    };
+    div.innerHTML = `
+      <div class="avatar ${emp.cls}" style="width:30px;height:30px;font-size:11px">${emp.av}</div>
+      <span class="swap-option-name">${emp.name}</span>
+      ${idx === state.queueIndex ? '<span class="swap-option-badge">คิวปัจจุบัน</span>' : ''}
+      ${idx === deletedEmpIndex ? '<span class="swap-option-badge" style="color:var(--green)">คนเดิม</span>' : ''}
+    `;
+    opts.appendChild(div);
+  });
+
+  document.getElementById('modal-delete').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modal-delete').style.display = 'none';
+  pendingDelete = null;
+  selectedSwapIndex = null;
+}
+
+async function confirmDelete() {
+  if (!pendingDelete) return;
+  const btn = document.querySelector('#modal-delete .btn-danger');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader"></i>กำลังลบ...';
+  setSyncState('loading', 'กำลังลบงาน...');
+  try {
+    await fetch(API_URL + '?action=deleteJob&id=' + pendingDelete.id);
+    if (selectedSwapIndex !== null) {
+      await fetch(API_URL + '?action=setQueue&index=' + selectedSwapIndex);
+    }
+    closeModal();
+    await fetchAll();
+  } catch(e) {
+    setSyncState('err', 'ลบไม่สำเร็จ');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-trash"></i>ลบและอัพเดทคิว';
+}
+
+function renderAll() { renderQueue(); renderCalendar(); renderHistory(); }
+
+function renderQueue() {
+  const el = document.getElementById('queue-list');
+  el.innerHTML = '';
+  for (let i = 0; i < 4; i++) {
+    const emp = EMPLOYEES[(state.queueIndex + i) % 4];
+    const isNext = i === 0;
+    const div = document.createElement('div');
+    div.className = 'queue-row' + (isNext ? ' next' : '');
+    div.innerHTML = `
+      <div class="avatar ${emp.cls}">${emp.av}</div>
+      <span class="emp-name" style="font-weight:${isNext?'600':'400'}">${emp.name}</span>
+      ${isNext
+        ? '<span class="badge badge-next"><i class="ti ti-arrow-right" style="font-size:10px;vertical-align:-1px"></i> ถัดไป</span>'
+        : '<span class="badge badge-num">คิวที่ '+(i+1)+'</span>'}
+    `;
+    el.appendChild(div);
+  }
+}
+
+const MONTH_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const DAY_TH = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+
+function renderCalendar() {
+  document.getElementById('cal-month-label').textContent = MONTH_TH[calMonth] + ' ' + (calYear + 543);
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  DAY_TH.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-day-label';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+  const firstDow = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const prevDays = new Date(calYear, calMonth, 0).getDate();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const jobMap = {};
+  state.jobs.forEach(j => {
+    const key = String(j.date).substring(0,10);
+    if (!jobMap[key]) jobMap[key] = [];
+    jobMap[key].push(j);
+  });
+  for (let i = 0; i < firstDow; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell other-month';
+    cell.innerHTML = `<div class="cal-date">${prevDays - firstDow + 1 + i}</div>`;
+    grid.appendChild(cell);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const jobs = jobMap[ds] || [];
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (jobs.length ? ' has-event' : '') + (ds === todayStr ? ' today' : '');
+    let html = `<div class="cal-date">${d}</div>`;
+    jobs.forEach(j => {
+      html += `<div class="cal-person">${j.employeeName}</div><div class="cal-event">${j.location}</div>`;
+    });
+    cell.innerHTML = html;
+    grid.appendChild(cell);
+  }
+  const total = firstDow + daysInMonth;
+  const rem = (7 - total % 7) % 7;
+  for (let i = 1; i <= rem; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell other-month';
+    cell.innerHTML = `<div class="cal-date">${i}</div>`;
+    grid.appendChild(cell);
+  }
+}
+
+function changeMonth(d) {
+  calMonth += d;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function formatDate(d) {
+  const s = String(d).substring(0,10);
+  const dt = new Date(s + 'T00:00:00');
+  return dt.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'});
+}
+
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  const jobs = [...state.jobs].sort((a,b) => String(b.date).localeCompare(String(a.date)));
+  if (!jobs.length) { el.innerHTML = '<div class="empty">ยังไม่มีประวัติงาน</div>'; return; }
+  const empMap = {};
+  EMPLOYEES.forEach(e => empMap[e.name] = e);
+  el.innerHTML = jobs.slice(0,50).map(j => {
+    const emp = empMap[j.employeeName] || {av: (j.employeeName||'?')[0], cls:'av-b'};
+    return `<div class="hist-item">
+      <div class="avatar av-sm ${emp.cls}">${emp.av}</div>
+      <span class="hist-date">${formatDate(j.date)}</span>
+      <span class="hist-loc">${j.location}${j.note ? ' <span class="tag">'+j.note+'</span>' : ''}</span>
+      <span class="hist-person">${j.employeeName}</span>
+      <button class="btn-icon" onclick="openDeleteModal('${j.id}')" title="ลบงานนี้"><i class="ti ti-trash"></i></button>
+    </div>`;
+  }).join('');
+}
+
+const now = new Date();
+calYear = now.getFullYear();
+calMonth = now.getMonth();
+document.getElementById('inp-date').value = now.toISOString().split('T')[0];
+renderQueue();
+fetchAll();
+setInterval(fetchAll, 60000);
+</script>
+</body>
+</html>
