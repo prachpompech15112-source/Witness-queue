@@ -10,6 +10,7 @@
   :root {
     --bg: #f5f5f3;
     --surface: #ffffff;
+    --surface2: #f0efeb;
     --border: #e4e4e0;
     --border-mid: #d0d0cb;
     --text: #1a1a18;
@@ -20,100 +21,110 @@
     --green-mid: #9FE1CB;
     --green-dark: #085041;
     --green-deep: #0F6E56;
-    --red: #E24B4A;
-    --red-light: #FCEBEB;
-    --amber: #EF9F27;
-    --amber-light: #FAEEDA;
     --radius: 10px;
     --radius-sm: 6px;
   }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; min-height: 100vh; }
   .container { max-width: 640px; margin: 0 auto; padding: 20px 16px 48px; }
-  header { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  header h1 { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  header { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  header h1 { font-size: 17px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
   header h1 i { color: var(--green); font-size: 20px; }
   .sync-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); background: var(--surface); border: 0.5px solid var(--border); border-radius: 20px; padding: 4px 10px; }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
   .dot.ok { background: var(--green); }
-  .dot.err { background: var(--red); }
-  .dot.loading { background: var(--amber); animation: pulse 1s infinite; }
+  .dot.err { background: #E24B4A; }
+  .dot.loading { background: #EF9F27; animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; }
   .card-title { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-  .card-title i { font-size: 15px; }
-  .queue-row { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); margin-bottom: 6px; background: var(--bg); }
-  .queue-row:last-child { margin-bottom: 0; }
-  .queue-row.next { border: 1.5px solid var(--green); background: var(--green-light); }
-  .avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+
+  /* stat cards */
+  .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+  .stat-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; border: 0.5px solid transparent; position: relative; transition: border-color 0.2s; }
+  .stat-card.lowest { border: 1.5px solid var(--green); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
   .av-b { background: #CECBF6; color: #26215C; }
   .av-be { background: #9FE1CB; color: #04342C; }
   .av-a { background: #FAC775; color: #412402; }
   .av-f { background: #F4C0D1; color: #4B1528; }
-  .emp-name { flex: 1; font-size: 14px; }
-  .badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; }
-  .badge-next { background: var(--green-mid); color: var(--green-dark); }
-  .badge-num { background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
+  .stat-av { margin: 0 auto 5px; }
+  .stat-name { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+  .stat-count { font-size: 22px; font-weight: 500; line-height: 1; color: var(--text); }
+  .stat-label { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .stat-bar-wrap { margin-top: 6px; background: var(--border); border-radius: 4px; height: 4px; overflow: hidden; }
+  .stat-bar { height: 4px; border-radius: 4px; background: var(--green); transition: width 0.4s; }
+  .suggest-badge { position: absolute; top: 5px; right: 5px; background: var(--green-mid); color: var(--green-dark); font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 10px; }
+
+  /* form */
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .form-group { display: flex; flex-direction: column; gap: 4px; }
   .form-group label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-  .form-group input { font-size: 14px; padding: 8px 11px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-mid); background: var(--bg); color: var(--text); width: 100%; outline: none; transition: border-color 0.15s; }
+  .form-group input { font-size: 14px; padding: 8px 11px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-mid); background: var(--bg); color: var(--text); width: 100%; outline: none; }
   .form-group input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.1); }
-  .btn { display: inline-flex; align-items: center; gap: 7px; border-radius: var(--radius-sm); padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; }
-  .btn:active { transform: scale(0.98); }
+
+  /* who buttons */
+  .who-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
+  .who-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 12px; }
+  .who-btn { padding: 8px 4px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-mid); background: var(--bg); cursor: pointer; text-align: center; transition: all 0.15s; }
+  .who-btn:hover { border-color: var(--green); background: var(--green-light); }
+  .who-btn.selected { border: 1.5px solid var(--green); background: var(--green-light); }
+  .who-btn .wav { width: 28px; height: 28px; font-size: 11px; margin: 0 auto 4px; }
+  .who-btn .wname { font-size: 12px; font-weight: 500; }
+  .who-btn .wcount { font-size: 10px; color: var(--text-muted); }
+  .suggest-star { color: var(--green); font-size: 10px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 7px; border-radius: var(--radius-sm); padding: 9px 18px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-green { background: var(--green); color: #fff; }
   .btn-green:hover { opacity: 0.9; }
   .btn-ghost { background: none; border: 0.5px solid var(--border-mid); color: var(--text-muted); }
-  .btn-ghost:hover { background: var(--bg); }
-  .btn-danger { background: var(--red-light); border: 0.5px solid #F7C1C1; color: var(--red); }
-  .btn-danger:hover { background: #F7C1C1; }
+  .btn-danger { background: #FCEBEB; border: 0.5px solid #F7C1C1; color: #E24B4A; }
+
   .result-card { background: var(--green-light); border: 0.5px solid var(--green-mid); border-radius: var(--radius-sm); padding: 12px 14px; display: none; align-items: center; gap: 12px; margin-top: 12px; }
-  .result-name { font-size: 20px; font-weight: 600; color: var(--green-dark); }
+  .result-name { font-size: 20px; font-weight: 500; color: var(--green-dark); }
   .result-sub { font-size: 12px; color: var(--green-deep); margin-top: 2px; }
+
+  /* calendar */
   .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .cal-nav { display: flex; align-items: center; gap: 6px; }
   .cal-nav button { background: none; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 10px; cursor: pointer; color: var(--text); font-size: 13px; }
   .cal-nav button:hover { background: var(--bg); }
-  .cal-month { font-size: 15px; font-weight: 600; }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-month { font-size: 15px; font-weight: 500; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
   .cal-day-label { text-align: center; font-size: 11px; color: var(--text-hint); padding: 4px 0; font-weight: 500; }
   .cal-cell { min-height: 54px; border-radius: var(--radius-sm); padding: 4px 5px; border: 0.5px solid transparent; }
   .cal-cell.has-event { background: var(--green-light); border-color: var(--green-mid); }
   .cal-cell.today { border-color: var(--green); border-width: 1.5px; }
   .cal-cell.other-month { opacity: 0.3; }
   .cal-date { font-size: 11px; color: var(--text-hint); }
-  .cal-person { font-size: 10px; color: var(--green-deep); font-weight: 600; margin-top: 2px; }
+  .cal-person { font-size: 10px; color: var(--green-deep); font-weight: 500; margin-top: 2px; }
   .cal-event { font-size: 10px; color: var(--green-dark); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-  .history-list { max-height: 260px; overflow-y: auto; }
+
+  /* history */
+  .history-list { max-height: 240px; overflow-y: auto; }
   .hist-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
   .hist-item:last-child { border-bottom: none; }
   .hist-date { color: var(--text-muted); min-width: 95px; }
   .hist-loc { flex: 1; }
-  .hist-person { font-weight: 600; min-width: 40px; text-align: right; }
-  .tag { font-size: 11px; padding: 2px 6px; border-radius: 10px; background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
+  .hist-person { font-weight: 500; min-width: 40px; text-align: right; }
   .av-sm { width: 26px; height: 26px; font-size: 10px; flex-shrink: 0; }
+  .tag { font-size: 11px; padding: 2px 6px; border-radius: 10px; background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
   .btn-icon { background: none; border: none; cursor: pointer; color: var(--text-hint); padding: 4px 6px; border-radius: var(--radius-sm); font-size: 15px; display: flex; align-items: center; }
-  .btn-icon:hover { background: var(--red-light); color: var(--red); }
+  .btn-icon:hover { background: #FCEBEB; color: #E24B4A; }
   .empty { text-align: center; color: var(--text-hint); font-size: 13px; padding: 1.5rem 0; }
 
-  /* Modal */
+  /* modal */
   .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
   .modal { background: var(--surface); border-radius: var(--radius); padding: 20px; width: 100%; max-width: 380px; border: 0.5px solid var(--border); }
-  .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .modal h3 { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
   .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
   .modal-job-info { background: var(--bg); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 16px; font-size: 13px; }
   .modal-job-info strong { display: block; font-size: 14px; margin-bottom: 2px; }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
-  .swap-options { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-  .swap-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); cursor: pointer; background: var(--bg); transition: border-color 0.15s; }
-  .swap-option:hover { border-color: var(--green); background: var(--green-light); }
-  .swap-option.selected { border: 1.5px solid var(--green); background: var(--green-light); }
-  .swap-option-name { font-size: 14px; font-weight: 500; flex: 1; }
-  .swap-option-badge { font-size: 11px; color: var(--text-muted); }
 
   @media (max-width: 480px) {
     .form-grid { grid-template-columns: 1fr; }
-    .hist-date { min-width: 80px; font-size: 12px; }
+    .stat-count { font-size: 18px; }
   }
 </style>
 </head>
@@ -128,16 +139,16 @@
   </header>
 
   <div class="card">
-    <div class="card-title"><i class="ti ti-list-numbers"></i>ลำดับคิว</div>
-    <div id="queue-list"></div>
+    <div class="card-title"><i class="ti ti-chart-bar"></i>สถิติการออกงาน</div>
+    <div class="stat-grid" id="stat-grid"></div>
   </div>
 
   <div class="card">
     <div class="card-title"><i class="ti ti-plus"></i>เพิ่มงานนอกสถานที่</div>
     <div class="form-grid">
       <div class="form-group">
-        <label>สถานที่</label>
-        <input type="text" id="inp-loc" placeholder="เช่น การไฟฟ้าเขต X">
+        <label>ชื่อบริษัท</label>
+        <input type="text" id="inp-loc" placeholder="เช่น EKARAT">
       </div>
       <div class="form-group">
         <label>วันที่</label>
@@ -148,8 +159,10 @@
       <label>หมายเหตุ (ถ้ามี)</label>
       <input type="text" id="inp-note" placeholder="เช่น ทดสอบหม้อแปลง 500 kVA">
     </div>
+    <div class="who-label">เลือกคนที่จะไป</div>
+    <div class="who-grid" id="who-grid"></div>
     <button class="btn btn-green" id="btn-submit" onclick="addJob()">
-      <i class="ti ti-plus"></i>บันทึกและมอบหมายงาน
+      <i class="ti ti-plus"></i>บันทึกงาน
     </button>
     <div class="result-card" id="result-card">
       <div id="result-avatar" class="avatar" style="width:44px;height:44px;font-size:16px"></div>
@@ -178,16 +191,14 @@
   </div>
 </div>
 
-<!-- Delete confirm modal -->
 <div class="modal-backdrop" id="modal-delete" style="display:none">
   <div class="modal">
     <h3>ยืนยันการลบงาน</h3>
-    <p>เลือกว่าจะจัดการคิวอย่างไรหลังลบ</p>
+    <p>รายการนี้จะถูกลบออกจากระบบ</p>
     <div class="modal-job-info" id="modal-job-info"></div>
-    <div class="swap-options" id="swap-options"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal()">ยกเลิก</button>
-      <button class="btn btn-danger" onclick="confirmDelete()"><i class="ti ti-trash"></i>ลบและอัพเดทคิว</button>
+      <button class="btn btn-danger" id="btn-confirm-delete" onclick="confirmDelete()"><i class="ti ti-trash"></i>ลบ</button>
     </div>
   </div>
 </div>
@@ -202,10 +213,10 @@ const EMPLOYEES = [
   {id:'folk', name:'Folk', av:'F', cls:'av-f'},
 ];
 
-let state = {queueIndex: 0, jobs: []};
-let calYear, calMonth;
+let state = {jobs: []};
+let selectedEmp = null;
 let pendingDelete = null;
-let selectedSwapIndex = null;
+let calYear, calMonth;
 
 async function fetchAll() {
   setSyncState('loading', 'กำลังโหลด...');
@@ -213,8 +224,8 @@ async function fetchAll() {
     const res = await fetch(API_URL + '?action=getAll');
     const data = await res.json();
     state.jobs = data.jobs || [];
-    state.queueIndex = data.queueIndex || 0;
     setSyncState('ok', 'ซิงค์แล้ว · ' + new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}));
+    autoSelectSuggested();
     renderAll();
   } catch(e) {
     setSyncState('err', 'เชื่อมต่อไม่ได้');
@@ -226,125 +237,148 @@ function setSyncState(s, msg) {
   document.getElementById('sync-label').textContent = msg;
 }
 
+function getCounts() {
+  const counts = {};
+  EMPLOYEES.forEach(e => counts[e.id] = 0);
+  state.jobs.forEach(j => {
+    const emp = EMPLOYEES.find(e => e.name === j.employeeName);
+    if (emp) counts[emp.id]++;
+  });
+  return counts;
+}
+
+function getSuggestedEmp() {
+  const counts = getCounts();
+  let minCount = Infinity;
+  let suggested = EMPLOYEES[0];
+  EMPLOYEES.forEach(emp => {
+    if (counts[emp.id] < minCount) {
+      minCount = counts[emp.id];
+      suggested = emp;
+    }
+  });
+  return suggested;
+}
+
+function autoSelectSuggested() {
+  if (!selectedEmp) {
+    selectedEmp = getSuggestedEmp();
+  }
+}
+
+function renderStats() {
+  const counts = getCounts();
+  const maxCount = Math.max(...Object.values(counts), 1);
+  const suggested = getSuggestedEmp();
+  const el = document.getElementById('stat-grid');
+  el.innerHTML = EMPLOYEES.map(emp => {
+    const count = counts[emp.id];
+    const pct = Math.round((count / maxCount) * 100);
+    const isLowest = emp.id === suggested.id;
+    return `<div class="stat-card ${isLowest ? 'lowest' : ''}">
+      ${isLowest ? '<div class="suggest-badge">ควรไปก่อน</div>' : ''}
+      <div class="avatar stat-av ${emp.cls}">${emp.av}</div>
+      <div class="stat-name">${emp.name}</div>
+      <div class="stat-count">${count}</div>
+      <div class="stat-label">ครั้ง</div>
+      <div class="stat-bar-wrap"><div class="stat-bar" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderWhoGrid() {
+  const counts = getCounts();
+  const suggested = getSuggestedEmp();
+  const el = document.getElementById('who-grid');
+  el.innerHTML = EMPLOYEES.map(emp => {
+    const isSelected = selectedEmp && selectedEmp.id === emp.id;
+    const isSuggested = emp.id === suggested.id;
+    return `<div class="who-btn ${isSelected ? 'selected' : ''}" onclick="selectEmp('${emp.id}')">
+      <div class="avatar wav ${emp.cls}">${emp.av}</div>
+      <div class="wname">${emp.name}${isSuggested ? ' <span class="suggest-star">★</span>' : ''}</div>
+      <div class="wcount">ไปแล้ว ${counts[emp.id]} ครั้ง</div>
+    </div>`;
+  }).join('');
+}
+
+function selectEmp(id) {
+  selectedEmp = EMPLOYEES.find(e => e.id === id);
+  renderWhoGrid();
+}
+
 async function addJob() {
   const loc = document.getElementById('inp-loc').value.trim();
   const date = document.getElementById('inp-date').value;
   const note = document.getElementById('inp-note').value.trim();
-  if (!loc || !date) { alert('กรุณากรอกสถานที่และวันที่'); return; }
+  if (!loc || !date) { alert('กรุณากรอกชื่อบริษัทและวันที่'); return; }
+  if (!selectedEmp) { alert('กรุณาเลือกคนที่จะไป'); return; }
+
   const btn = document.getElementById('btn-submit');
   btn.disabled = true;
   btn.innerHTML = '<i class="ti ti-loader"></i>กำลังบันทึก...';
   setSyncState('loading', 'กำลังบันทึก...');
-  const emp = EMPLOYEES[state.queueIndex % 4];
+
   try {
     const res = await fetch(API_URL + '?action=addJob', {
       method: 'POST',
-      body: JSON.stringify({id: Date.now(), date, location: loc, note})
+      body: JSON.stringify({id: Date.now(), date, location: loc, note, employeeName: selectedEmp.name})
     });
     const data = await res.json();
     if (data.success) {
       const rc = document.getElementById('result-card');
       rc.style.display = 'flex';
-      document.getElementById('result-name').textContent = emp.name;
+      document.getElementById('result-name').textContent = selectedEmp.name;
       document.getElementById('result-sub').textContent = formatDate(date) + ' · ' + loc + (note ? ' · ' + note : '');
       const av = document.getElementById('result-avatar');
-      av.className = 'avatar ' + emp.cls;
-      av.textContent = emp.av;
+      av.className = 'avatar ' + selectedEmp.cls;
+      av.textContent = selectedEmp.av;
       document.getElementById('inp-loc').value = '';
       document.getElementById('inp-note').value = '';
+      selectedEmp = null;
       await fetchAll();
     }
   } catch(e) {
     setSyncState('err', 'บันทึกไม่สำเร็จ');
   }
   btn.disabled = false;
-  btn.innerHTML = '<i class="ti ti-plus"></i>บันทึกและมอบหมายงาน';
+  btn.innerHTML = '<i class="ti ti-plus"></i>บันทึกงาน';
 }
 
 function openDeleteModal(jobId) {
   const job = state.jobs.find(j => String(j.id) === String(jobId));
   if (!job) return;
   pendingDelete = job;
-  selectedSwapIndex = null;
-
-  // Find original index of deleted person
-  const deletedEmpIndex = EMPLOYEES.findIndex(e => e.name === job.employeeName);
-
   document.getElementById('modal-job-info').innerHTML = `
     <strong>${job.location}</strong>
     ${formatDate(job.date)} · ${job.employeeName}${job.note ? ' · ' + job.note : ''}
   `;
-
-  // Build swap options — who should be next after delete
-  const opts = document.getElementById('swap-options');
-  opts.innerHTML = '<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">คิวถัดไปหลังลบงานนี้ควรเป็นใคร?</div>';
-
-  EMPLOYEES.forEach((emp, idx) => {
-    const div = document.createElement('div');
-    div.className = 'swap-option' + (idx === deletedEmpIndex ? ' selected' : '');
-    if (idx === deletedEmpIndex) selectedSwapIndex = idx;
-    div.onclick = () => {
-      document.querySelectorAll('.swap-option').forEach(el => el.classList.remove('selected'));
-      div.classList.add('selected');
-      selectedSwapIndex = idx;
-    };
-    div.innerHTML = `
-      <div class="avatar ${emp.cls}" style="width:30px;height:30px;font-size:11px">${emp.av}</div>
-      <span class="swap-option-name">${emp.name}</span>
-      ${idx === state.queueIndex ? '<span class="swap-option-badge">คิวปัจจุบัน</span>' : ''}
-      ${idx === deletedEmpIndex ? '<span class="swap-option-badge" style="color:var(--green)">คนเดิม</span>' : ''}
-    `;
-    opts.appendChild(div);
-  });
-
   document.getElementById('modal-delete').style.display = 'flex';
 }
 
 function closeModal() {
   document.getElementById('modal-delete').style.display = 'none';
   pendingDelete = null;
-  selectedSwapIndex = null;
 }
 
 async function confirmDelete() {
   if (!pendingDelete) return;
-  const btn = document.querySelector('#modal-delete .btn-danger');
+  const btn = document.getElementById('btn-confirm-delete');
   btn.disabled = true;
-  btn.innerHTML = '<i class="ti ti-loader"></i>กำลังลบ...';
-  setSyncState('loading', 'กำลังลบงาน...');
   try {
     await fetch(API_URL + '?action=deleteJob&id=' + pendingDelete.id);
-    if (selectedSwapIndex !== null) {
-      await fetch(API_URL + '?action=setQueue&index=' + selectedSwapIndex);
-    }
     closeModal();
     await fetchAll();
   } catch(e) {
     setSyncState('err', 'ลบไม่สำเร็จ');
   }
   btn.disabled = false;
-  btn.innerHTML = '<i class="ti ti-trash"></i>ลบและอัพเดทคิว';
 }
 
-function renderAll() { renderQueue(); renderCalendar(); renderHistory(); }
-
-function renderQueue() {
-  const el = document.getElementById('queue-list');
-  el.innerHTML = '';
-  for (let i = 0; i < 4; i++) {
-    const emp = EMPLOYEES[(state.queueIndex + i) % 4];
-    const isNext = i === 0;
-    const div = document.createElement('div');
-    div.className = 'queue-row' + (isNext ? ' next' : '');
-    div.innerHTML = `
-      <div class="avatar ${emp.cls}">${emp.av}</div>
-      <span class="emp-name" style="font-weight:${isNext?'600':'400'}">${emp.name}</span>
-      ${isNext
-        ? '<span class="badge badge-next"><i class="ti ti-arrow-right" style="font-size:10px;vertical-align:-1px"></i> ถัดไป</span>'
-        : '<span class="badge badge-num">คิวที่ '+(i+1)+'</span>'}
-    `;
-    el.appendChild(div);
-  }
+function renderAll() {
+  renderStats();
+  renderWhoGrid();
+  renderCalendar();
+  renderHistory();
 }
 
 const MONTH_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
@@ -406,8 +440,7 @@ function changeMonth(d) {
 }
 
 function formatDate(d) {
-  const s = String(d).substring(0,10);
-  const dt = new Date(s + 'T00:00:00');
+  const dt = new Date(String(d).substring(0,10) + 'T00:00:00');
   return dt.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'});
 }
 
@@ -418,13 +451,13 @@ function renderHistory() {
   const empMap = {};
   EMPLOYEES.forEach(e => empMap[e.name] = e);
   el.innerHTML = jobs.slice(0,50).map(j => {
-    const emp = empMap[j.employeeName] || {av: (j.employeeName||'?')[0], cls:'av-b'};
+    const emp = empMap[j.employeeName] || {av:(j.employeeName||'?')[0], cls:'av-b'};
     return `<div class="hist-item">
       <div class="avatar av-sm ${emp.cls}">${emp.av}</div>
       <span class="hist-date">${formatDate(j.date)}</span>
       <span class="hist-loc">${j.location}${j.note ? ' <span class="tag">'+j.note+'</span>' : ''}</span>
       <span class="hist-person">${j.employeeName}</span>
-      <button class="btn-icon" onclick="openDeleteModal('${j.id}')" title="ลบงานนี้"><i class="ti ti-trash"></i></button>
+      <button class="btn-icon" onclick="openDeleteModal('${j.id}')" title="ลบ"><i class="ti ti-trash"></i></button>
     </div>`;
   }).join('');
 }
@@ -433,7 +466,6 @@ const now = new Date();
 calYear = now.getFullYear();
 calMonth = now.getMonth();
 document.getElementById('inp-date').value = now.toISOString().split('T')[0];
-renderQueue();
 fetchAll();
 setInterval(fetchAll, 60000);
 </script>
