@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>คิวงานนอกสถานที่</title>
+<title>ระบบจัดการทีมงาน</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,12 +21,16 @@
     --green-mid: #9FE1CB;
     --green-dark: #085041;
     --green-deep: #0F6E56;
+    --purple: #7C5CFC;
+    --purple-light: #EEE9FF;
+    --purple-mid: #C4B2FD;
+    --purple-dark: #3D1F99;
     --radius: 10px;
     --radius-sm: 6px;
   }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; min-height: 100vh; }
   .container { max-width: 640px; margin: 0 auto; padding: 20px 16px 48px; }
-  header { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  header { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   header h1 { font-size: 17px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
   header h1 i { color: var(--green); font-size: 20px; }
   .sync-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); background: var(--surface); border: 0.5px solid var(--border); border-radius: 20px; padding: 4px 10px; }
@@ -35,13 +39,23 @@
   .dot.err { background: #E24B4A; }
   .dot.loading { background: #EF9F27; animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 16px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 4px; }
+  .tab-btn { flex: 1; padding: 8px; border: none; border-radius: var(--radius-sm); background: none; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; }
+  .tab-btn.active-field { background: var(--green-light); color: var(--green-dark); }
+  .tab-btn.active-ot { background: var(--purple-light); color: var(--purple-dark); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
   .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; }
   .card-title { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
 
   /* stat cards */
   .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-  .stat-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; border: 0.5px solid transparent; position: relative; transition: border-color 0.2s; }
-  .stat-card.lowest { border: 1.5px solid var(--green); }
+  .stat-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 8px; text-align: center; border: 1.5px solid transparent; position: relative; }
+  .stat-card.lowest-field { border-color: var(--green); }
+  .stat-card.lowest-ot { border-color: var(--purple); }
   .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
   .av-b { background: #CECBF6; color: #26215C; }
   .av-be { background: #9FE1CB; color: #04342C; }
@@ -49,11 +63,13 @@
   .av-f { background: #F4C0D1; color: #4B1528; }
   .stat-av { margin: 0 auto 5px; }
   .stat-name { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
-  .stat-count { font-size: 22px; font-weight: 500; line-height: 1; color: var(--text); }
+  .stat-count { font-size: 22px; font-weight: 500; line-height: 1; }
   .stat-label { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
   .stat-bar-wrap { margin-top: 6px; background: var(--border); border-radius: 4px; height: 4px; overflow: hidden; }
-  .stat-bar { height: 4px; border-radius: 4px; background: var(--green); transition: width 0.4s; }
-  .suggest-badge { position: absolute; top: 5px; right: 5px; background: var(--green-mid); color: var(--green-dark); font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 10px; }
+  .stat-bar-field { height: 4px; border-radius: 4px; background: var(--green); }
+  .stat-bar-ot { height: 4px; border-radius: 4px; background: var(--purple); }
+  .suggest-badge-field { position: absolute; top: 5px; right: 5px; background: var(--green-mid); color: var(--green-dark); font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 10px; }
+  .suggest-badge-ot { position: absolute; top: 5px; right: 5px; background: var(--purple-mid); color: var(--purple-dark); font-size: 9px; font-weight: 500; padding: 2px 5px; border-radius: 10px; }
 
   /* form */
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
@@ -61,28 +77,38 @@
   .form-group label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
   .form-group input { font-size: 14px; padding: 8px 11px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-mid); background: var(--bg); color: var(--text); width: 100%; outline: none; }
   .form-group input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,0.1); }
+  .form-group input.ot-focus:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,92,252,0.1); }
 
   /* who buttons */
   .who-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
   .who-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 12px; }
   .who-btn { padding: 8px 4px; border-radius: var(--radius-sm); border: 0.5px solid var(--border-mid); background: var(--bg); cursor: pointer; text-align: center; transition: all 0.15s; }
-  .who-btn:hover { border-color: var(--green); background: var(--green-light); }
-  .who-btn.selected { border: 1.5px solid var(--green); background: var(--green-light); }
-  .who-btn .wav { width: 28px; height: 28px; font-size: 11px; margin: 0 auto 4px; }
+  .who-btn .wav { width: 28px; height: 28px; font-size: 11px; margin: 0 auto 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500; }
   .who-btn .wname { font-size: 12px; font-weight: 500; }
   .who-btn .wcount { font-size: 10px; color: var(--text-muted); }
-  .suggest-star { color: var(--green); font-size: 10px; }
+  .who-btn:hover { border-color: var(--green); background: var(--green-light); }
+  .who-btn.selected-field { border: 1.5px solid var(--green); background: var(--green-light); }
+  .who-btn:hover.ot, .who-btn.ot:hover { border-color: var(--purple); background: var(--purple-light); }
+  .who-btn.selected-ot { border: 1.5px solid var(--purple); background: var(--purple-light); }
+  .suggest-star-field { color: var(--green); font-size: 10px; }
+  .suggest-star-ot { color: var(--purple); font-size: 10px; }
 
   .btn { display: inline-flex; align-items: center; gap: 7px; border-radius: var(--radius-sm); padding: 9px 18px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-green { background: var(--green); color: #fff; }
   .btn-green:hover { opacity: 0.9; }
+  .btn-purple { background: var(--purple); color: #fff; }
+  .btn-purple:hover { opacity: 0.9; }
   .btn-ghost { background: none; border: 0.5px solid var(--border-mid); color: var(--text-muted); }
   .btn-danger { background: #FCEBEB; border: 0.5px solid #F7C1C1; color: #E24B4A; }
 
-  .result-card { background: var(--green-light); border: 0.5px solid var(--green-mid); border-radius: var(--radius-sm); padding: 12px 14px; display: none; align-items: center; gap: 12px; margin-top: 12px; }
-  .result-name { font-size: 20px; font-weight: 500; color: var(--green-dark); }
-  .result-sub { font-size: 12px; color: var(--green-deep); margin-top: 2px; }
+  .result-card { border-radius: var(--radius-sm); padding: 12px 14px; display: none; align-items: center; gap: 12px; margin-top: 12px; }
+  .result-card.field { background: var(--green-light); border: 0.5px solid var(--green-mid); }
+  .result-card.ot { background: var(--purple-light); border: 0.5px solid var(--purple-mid); }
+  .result-name-field { font-size: 20px; font-weight: 500; color: var(--green-dark); }
+  .result-sub-field { font-size: 12px; color: var(--green-deep); margin-top: 2px; }
+  .result-name-ot { font-size: 20px; font-weight: 500; color: var(--purple-dark); }
+  .result-sub-ot { font-size: 12px; color: var(--purple); margin-top: 2px; }
 
   /* calendar */
   .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
@@ -93,11 +119,16 @@
   .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
   .cal-day-label { text-align: center; font-size: 11px; color: var(--text-hint); padding: 4px 0; font-weight: 500; }
   .cal-cell { min-height: 54px; border-radius: var(--radius-sm); padding: 4px 5px; border: 0.5px solid transparent; }
-  .cal-cell.has-event { background: var(--green-light); border-color: var(--green-mid); }
-  .cal-cell.today { border-color: var(--green); border-width: 1.5px; }
+  .cal-cell.has-event-field { background: var(--green-light); border-color: var(--green-mid); }
+  .cal-cell.has-event-ot { background: var(--purple-light); border-color: var(--purple-mid); }
+  .cal-cell.today { border-width: 1.5px; }
+  .cal-cell.today.has-event-field, .cal-cell.today { border-color: var(--green); }
+  .cal-cell.today.has-event-ot { border-color: var(--purple); }
   .cal-cell.other-month { opacity: 0.3; }
   .cal-date { font-size: 11px; color: var(--text-hint); }
-  .cal-person { font-size: 10px; color: var(--green-deep); font-weight: 500; margin-top: 2px; }
+  .cal-person { font-size: 10px; font-weight: 500; margin-top: 2px; }
+  .cal-person.field { color: var(--green-deep); }
+  .cal-person.ot { color: var(--purple); }
   .cal-event { font-size: 10px; color: var(--green-dark); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
   /* history */
@@ -107,7 +138,7 @@
   .hist-date { color: var(--text-muted); min-width: 95px; }
   .hist-loc { flex: 1; }
   .hist-person { font-weight: 500; min-width: 40px; text-align: right; }
-  .av-sm { width: 26px; height: 26px; font-size: 10px; flex-shrink: 0; }
+  .av-sm { width: 26px; height: 26px; font-size: 10px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500; }
   .tag { font-size: 11px; padding: 2px 6px; border-radius: 10px; background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
   .btn-icon { background: none; border: none; cursor: pointer; color: var(--text-hint); padding: 4px 6px; border-radius: var(--radius-sm); font-size: 15px; display: flex; align-items: center; }
   .btn-icon:hover { background: #FCEBEB; color: #E24B4A; }
@@ -131,69 +162,126 @@
 <body>
 <div class="container">
   <header>
-    <h1><i class="ti ti-map-pin"></i>คิวงานนอกสถานที่</h1>
+    <h1><i class="ti ti-map-pin"></i>ระบบจัดการทีมงาน</h1>
     <div class="sync-pill">
       <div class="dot loading" id="sync-dot"></div>
       <span id="sync-label">กำลังเชื่อมต่อ...</span>
     </div>
   </header>
 
-  <div class="card">
-    <div class="card-title"><i class="ti ti-chart-bar"></i>สถิติการออกงาน</div>
-    <div class="stat-grid" id="stat-grid"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title"><i class="ti ti-plus"></i>เพิ่มงานนอกสถานที่</div>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>ชื่อบริษัท</label>
-        <input type="text" id="inp-loc" placeholder="เช่น EKARAT">
-      </div>
-      <div class="form-group">
-        <label>วันที่</label>
-        <input type="date" id="inp-date">
-      </div>
-    </div>
-    <div class="form-group" style="margin-bottom:12px">
-      <label>หมายเหตุ (ถ้ามี)</label>
-      <input type="text" id="inp-note" placeholder="เช่น ทดสอบหม้อแปลง 500 kVA">
-    </div>
-    <div class="who-label">เลือกคนที่จะไป</div>
-    <div class="who-grid" id="who-grid"></div>
-    <button class="btn btn-green" id="btn-submit" onclick="addJob()">
-      <i class="ti ti-plus"></i>บันทึกงาน
+  <div class="tabs">
+    <button class="tab-btn active-field" id="tab-field" onclick="switchTab('field')">
+      <i class="ti ti-map-pin"></i>งานนอกสถานที่
     </button>
-    <div class="result-card" id="result-card">
-      <div id="result-avatar" class="avatar" style="width:44px;height:44px;font-size:16px"></div>
-      <div>
-        <div class="result-name" id="result-name"></div>
-        <div class="result-sub" id="result-sub"></div>
+    <button class="tab-btn" id="tab-ot" onclick="switchTab('ot')">
+      <i class="ti ti-clock"></i>โอที
+    </button>
+  </div>
+
+  <!-- FIELD WORK TAB -->
+  <div class="tab-pane active" id="pane-field">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-chart-bar"></i>สถิติการออกงาน</div>
+      <div class="stat-grid" id="stat-grid-field"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-plus"></i>เพิ่มงานนอกสถานที่</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>ชื่อบริษัท</label>
+          <input type="text" id="inp-loc" placeholder="เช่น EKARAT">
+        </div>
+        <div class="form-group">
+          <label>วันที่</label>
+          <input type="date" id="inp-date">
+        </div>
       </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label>หมายเหตุ (ถ้ามี)</label>
+        <input type="text" id="inp-note" placeholder="เช่น ทดสอบหม้อแปลง 500 kVA">
+      </div>
+      <div class="who-label">เลือกคนที่จะไป</div>
+      <div class="who-grid" id="who-grid-field"></div>
+      <button class="btn btn-green" id="btn-submit-field" onclick="addJob()">
+        <i class="ti ti-plus"></i>บันทึกงาน
+      </button>
+      <div class="result-card field" id="result-card-field">
+        <div id="result-avatar-field" class="avatar" style="width:44px;height:44px;font-size:16px"></div>
+        <div>
+          <div class="result-name-field" id="result-name-field"></div>
+          <div class="result-sub-field" id="result-sub-field"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cal-header">
+        <div class="card-title" style="margin:0"><i class="ti ti-calendar"></i>ปฏิทินงาน</div>
+        <div class="cal-nav">
+          <button onclick="changeMonth('field',-1)"><i class="ti ti-chevron-left"></i></button>
+          <span class="cal-month" id="cal-month-field"></span>
+          <button onclick="changeMonth('field',1)"><i class="ti ti-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid-field"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-clock-history"></i>ประวัติงาน</div>
+      <div class="history-list" id="history-field"></div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="cal-header">
-      <div class="card-title" style="margin:0"><i class="ti ti-calendar"></i>ปฏิทินงาน</div>
-      <div class="cal-nav">
-        <button onclick="changeMonth(-1)"><i class="ti ti-chevron-left"></i></button>
-        <span class="cal-month" id="cal-month-label"></span>
-        <button onclick="changeMonth(1)"><i class="ti ti-chevron-right"></i></button>
+  <!-- OT TAB -->
+  <div class="tab-pane" id="pane-ot">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-chart-bar"></i>สถิติโอที</div>
+      <div class="stat-grid" id="stat-grid-ot"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-plus"></i>บันทึกโอที</div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label>วันที่</label>
+        <input type="date" id="inp-ot-date" class="ot-focus">
+      </div>
+      <div class="who-label">เลือกคนที่โอที</div>
+      <div class="who-grid" id="who-grid-ot"></div>
+      <button class="btn btn-purple" id="btn-submit-ot" onclick="addOT()">
+        <i class="ti ti-plus"></i>บันทึกโอที
+      </button>
+      <div class="result-card ot" id="result-card-ot">
+        <div id="result-avatar-ot" class="avatar" style="width:44px;height:44px;font-size:16px"></div>
+        <div>
+          <div class="result-name-ot" id="result-name-ot"></div>
+          <div class="result-sub-ot" id="result-sub-ot"></div>
+        </div>
       </div>
     </div>
-    <div class="cal-grid" id="cal-grid"></div>
-  </div>
 
-  <div class="card">
-    <div class="card-title"><i class="ti ti-clock-history"></i>ประวัติงาน</div>
-    <div class="history-list" id="history-list"></div>
+    <div class="card">
+      <div class="cal-header">
+        <div class="card-title" style="margin:0"><i class="ti ti-calendar"></i>ปฏิทินโอที</div>
+        <div class="cal-nav">
+          <button onclick="changeMonth('ot',-1)"><i class="ti ti-chevron-left"></i></button>
+          <span class="cal-month" id="cal-month-ot"></span>
+          <button onclick="changeMonth('ot',1)"><i class="ti ti-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid-ot"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-clock-history"></i>ประวัติโอที</div>
+      <div class="history-list" id="history-ot"></div>
+    </div>
   </div>
 </div>
 
 <div class="modal-backdrop" id="modal-delete" style="display:none">
   <div class="modal">
-    <h3>ยืนยันการลบงาน</h3>
+    <h3>ยืนยันการลบ</h3>
     <p>รายการนี้จะถูกลบออกจากระบบ</p>
     <div class="modal-job-info" id="modal-job-info"></div>
     <div class="modal-actions">
@@ -213,23 +301,23 @@ const EMPLOYEES = [
   {id:'folk', name:'Folk', av:'F', cls:'av-f'},
 ];
 
-let state = {jobs: []};
-let selectedEmp = null;
+let state = { jobs: [], ot: [] };
+let selectedField = null;
+let selectedOT = [];
 let pendingDelete = null;
-let calYear, calMonth;
+let deleteType = null;
+let calFieldYear, calFieldMonth, calOTYear, calOTMonth;
+let currentTab = 'field';
 
-async function fetchAll() {
-  setSyncState('loading', 'กำลังโหลด...');
-  try {
-    const res = await fetch(API_URL + '?action=getAll');
-    const data = await res.json();
-    state.jobs = data.jobs || [];
-    setSyncState('ok', 'ซิงค์แล้ว · ' + new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}));
-    autoSelectSuggested();
-    renderAll();
-  } catch(e) {
-    setSyncState('err', 'เชื่อมต่อไม่ได้');
-  }
+const MONTH_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const DAY_TH = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('pane-field').classList.toggle('active', tab === 'field');
+  document.getElementById('pane-ot').classList.toggle('active', tab === 'ot');
+  document.getElementById('tab-field').className = 'tab-btn' + (tab === 'field' ? ' active-field' : '');
+  document.getElementById('tab-ot').className = 'tab-btn' + (tab === 'ot' ? ' active-ot' : '');
 }
 
 function setSyncState(s, msg) {
@@ -237,73 +325,107 @@ function setSyncState(s, msg) {
   document.getElementById('sync-label').textContent = msg;
 }
 
-function getCounts() {
+async function fetchAll() {
+  setSyncState('loading', 'กำลังโหลด...');
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch(API_URL + '?action=getAll'),
+      fetch(API_URL + '?action=getAllOT')
+    ]);
+    const d1 = await r1.json();
+    const d2 = await r2.json();
+    state.jobs = d1.jobs || [];
+    state.ot = d2.ot || [];
+    setSyncState('ok', 'ซิงค์แล้ว · ' + new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}));
+    autoSelect();
+    renderAll();
+  } catch(e) {
+    setSyncState('err', 'เชื่อมต่อไม่ได้');
+  }
+}
+
+function getCounts(data) {
   const counts = {};
   EMPLOYEES.forEach(e => counts[e.id] = 0);
-  state.jobs.forEach(j => {
+  data.forEach(j => {
     const emp = EMPLOYEES.find(e => e.name === j.employeeName);
     if (emp) counts[emp.id]++;
   });
   return counts;
 }
 
-function getSuggestedEmp() {
-  const counts = getCounts();
-  let minCount = Infinity;
-  let suggested = EMPLOYEES[0];
-  EMPLOYEES.forEach(emp => {
-    if (counts[emp.id] < minCount) {
-      minCount = counts[emp.id];
-      suggested = emp;
-    }
-  });
+function getSuggested(data) {
+  const counts = getCounts(data);
+  let min = Infinity, suggested = EMPLOYEES[0];
+  EMPLOYEES.forEach(emp => { if (counts[emp.id] < min) { min = counts[emp.id]; suggested = emp; } });
   return suggested;
 }
 
-function autoSelectSuggested() {
-  if (!selectedEmp) {
-    selectedEmp = getSuggestedEmp();
-  }
+function autoSelect() {
+  if (!selectedField) selectedField = getSuggested(state.jobs);
+  if (!selectedOT.length) { /* ไม่ pre-select โอที */ }
 }
 
-function renderStats() {
-  const counts = getCounts();
-  const maxCount = Math.max(...Object.values(counts), 1);
-  const suggested = getSuggestedEmp();
-  const el = document.getElementById('stat-grid');
-  el.innerHTML = EMPLOYEES.map(emp => {
-    const count = counts[emp.id];
-    const pct = Math.round((count / maxCount) * 100);
+function renderStats(data, gridId, badgeClass, barClass, lowestClass) {
+  const counts = getCounts(data);
+  const max = Math.max(...Object.values(counts), 1);
+  const suggested = getSuggested(data);
+  document.getElementById(gridId).innerHTML = EMPLOYEES.map(emp => {
+    const c = counts[emp.id];
+    const pct = Math.round((c / max) * 100);
     const isLowest = emp.id === suggested.id;
-    return `<div class="stat-card ${isLowest ? 'lowest' : ''}">
-      ${isLowest ? '<div class="suggest-badge">ควรไปก่อน</div>' : ''}
+    return `<div class="stat-card ${isLowest ? lowestClass : ''}">
+      ${isLowest ? `<div class="${badgeClass}">ควรไปก่อน</div>` : ''}
       <div class="avatar stat-av ${emp.cls}">${emp.av}</div>
       <div class="stat-name">${emp.name}</div>
-      <div class="stat-count">${count}</div>
+      <div class="stat-count">${c}</div>
       <div class="stat-label">ครั้ง</div>
-      <div class="stat-bar-wrap"><div class="stat-bar" style="width:${pct}%"></div></div>
+      <div class="stat-bar-wrap"><div class="${barClass}" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 }
 
-function renderWhoGrid() {
-  const counts = getCounts();
-  const suggested = getSuggestedEmp();
-  const el = document.getElementById('who-grid');
-  el.innerHTML = EMPLOYEES.map(emp => {
-    const isSelected = selectedEmp && selectedEmp.id === emp.id;
-    const isSuggested = emp.id === suggested.id;
-    return `<div class="who-btn ${isSelected ? 'selected' : ''}" onclick="selectEmp('${emp.id}')">
-      <div class="avatar wav ${emp.cls}">${emp.av}</div>
-      <div class="wname">${emp.name}${isSuggested ? ' <span class="suggest-star">★</span>' : ''}</div>
+function renderWhoGrid(data, gridId, selectedEmp, selectFn, selectedClass, starClass) {
+  const counts = getCounts(data);
+  const suggested = getSuggested(data);
+  document.getElementById(gridId).innerHTML = EMPLOYEES.map(emp => {
+    const isSel = selectedEmp && selectedEmp.id === emp.id;
+    const isSug = emp.id === suggested.id;
+    return `<div class="who-btn ${isSel ? selectedClass : ''}" onclick="${selectFn}('${emp.id}')">
+      <div class="wav avatar ${emp.cls}">${emp.av}</div>
+      <div class="wname">${emp.name}${isSug ? ` <span class="${starClass}">★</span>` : ''}</div>
       <div class="wcount">ไปแล้ว ${counts[emp.id]} ครั้ง</div>
     </div>`;
   }).join('');
 }
 
-function selectEmp(id) {
-  selectedEmp = EMPLOYEES.find(e => e.id === id);
-  renderWhoGrid();
+function selectFieldEmp(id) {
+  selectedField = EMPLOYEES.find(e => e.id === id);
+  renderWhoGrid(state.jobs, 'who-grid-field', selectedField, 'selectFieldEmp', 'selected-field', 'suggest-star-field');
+}
+
+function selectOTEmp(id) {
+  const idx = selectedOT.findIndex(e => e.id === id);
+  if (idx >= 0) {
+    selectedOT.splice(idx, 1);
+  } else {
+    selectedOT.push(EMPLOYEES.find(e => e.id === id));
+  }
+  renderOTWhoGrid();
+}
+
+function renderOTWhoGrid() {
+  const counts = getCounts(state.ot);
+  const suggested = getSuggested(state.ot);
+  document.getElementById('who-grid-ot').innerHTML = EMPLOYEES.map(emp => {
+    const isSel = selectedOT.some(e => e.id === emp.id);
+    const isSug = emp.id === suggested.id;
+    return `<div class="who-btn ${isSel ? 'selected-ot' : ''}" onclick="selectOTEmp('${emp.id}')">
+      <div class="wav avatar ${emp.cls}">${emp.av}</div>
+      <div class="wname">${emp.name}${isSug ? ' <span class="suggest-star-ot">★</span>' : ''}</div>
+      <div class="wcount">ไปแล้ว ${counts[emp.id]} ครั้ง</div>
+    </div>`;
+  }).join('');
 }
 
 async function addJob() {
@@ -311,95 +433,92 @@ async function addJob() {
   const date = document.getElementById('inp-date').value;
   const note = document.getElementById('inp-note').value.trim();
   if (!loc || !date) { alert('กรุณากรอกชื่อบริษัทและวันที่'); return; }
-  if (!selectedEmp) { alert('กรุณาเลือกคนที่จะไป'); return; }
-
-  const btn = document.getElementById('btn-submit');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="ti ti-loader"></i>กำลังบันทึก...';
-  setSyncState('loading', 'กำลังบันทึก...');
-
+  if (!selectedField) { alert('กรุณาเลือกคนที่จะไป'); return; }
+  const btn = document.getElementById('btn-submit-field');
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i>กำลังบันทึก...';
   try {
     const res = await fetch(API_URL + '?action=addJob', {
       method: 'POST',
-      body: JSON.stringify({id: Date.now(), date, location: loc, note, employeeName: selectedEmp.name})
+      body: JSON.stringify({id: Date.now(), date, location: loc, note, employeeName: selectedField.name})
     });
     const data = await res.json();
     if (data.success) {
-      const rc = document.getElementById('result-card');
-      rc.style.display = 'flex';
-      document.getElementById('result-name').textContent = selectedEmp.name;
-      document.getElementById('result-sub').textContent = formatDate(date) + ' · ' + loc + (note ? ' · ' + note : '');
-      const av = document.getElementById('result-avatar');
-      av.className = 'avatar ' + selectedEmp.cls;
-      av.textContent = selectedEmp.av;
+      showResult('field', selectedField, formatDate(date) + ' · ' + loc + (note ? ' · '+note : ''));
       document.getElementById('inp-loc').value = '';
       document.getElementById('inp-note').value = '';
-      selectedEmp = null;
+      selectedField = null;
       await fetchAll();
     }
-  } catch(e) {
-    setSyncState('err', 'บันทึกไม่สำเร็จ');
-  }
-  btn.disabled = false;
-  btn.innerHTML = '<i class="ti ti-plus"></i>บันทึกงาน';
+  } catch(e) { setSyncState('err', 'บันทึกไม่สำเร็จ'); }
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-plus"></i>บันทึกงาน';
 }
 
-function openDeleteModal(jobId) {
-  const job = state.jobs.find(j => String(j.id) === String(jobId));
-  if (!job) return;
-  pendingDelete = job;
-  document.getElementById('modal-job-info').innerHTML = `
-    <strong>${job.location}</strong>
-    ${formatDate(job.date)} · ${job.employeeName}${job.note ? ' · ' + job.note : ''}
-  `;
-  document.getElementById('modal-delete').style.display = 'flex';
-}
-
-function closeModal() {
-  document.getElementById('modal-delete').style.display = 'none';
-  pendingDelete = null;
-}
-
-async function confirmDelete() {
-  if (!pendingDelete) return;
-  const btn = document.getElementById('btn-confirm-delete');
-  btn.disabled = true;
+async function addOT() {
+  const date = document.getElementById('inp-ot-date').value;
+  if (!date) { alert('กรุณาเลือกวันที่'); return; }
+  if (!selectedOT.length) { alert('กรุณาเลือกคนที่โอที'); return; }
+  const btn = document.getElementById('btn-submit-ot');
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i>กำลังบันทึก...';
   try {
-    await fetch(API_URL + '?action=deleteJob&id=' + pendingDelete.id);
-    closeModal();
+    for (const emp of selectedOT) {
+      await fetch(API_URL + '?action=addOT', {
+        method: 'POST',
+        body: JSON.stringify({id: Date.now() + Math.random(), date, employeeName: emp.name})
+      });
+    }
+    const names = selectedOT.map(e => e.name).join(', ');
+    const rc = document.getElementById('result-card-ot');
+    rc.style.display = 'flex';
+    document.getElementById('result-name-ot').textContent = names;
+    document.getElementById('result-sub-ot').textContent = formatDate(date);
+    const av = document.getElementById('result-avatar-ot');
+    av.className = 'avatar ' + selectedOT[0].cls;
+    av.textContent = selectedOT.length > 1 ? selectedOT.length : selectedOT[0].av;
+    selectedOT = [];
     await fetchAll();
-  } catch(e) {
-    setSyncState('err', 'ลบไม่สำเร็จ');
-  }
-  btn.disabled = false;
+  } catch(e) { setSyncState('err', 'บันทึกไม่สำเร็จ'); }
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-plus"></i>บันทึกโอที';
+}
+
+function showResult(type, emp, sub) {
+  const rc = document.getElementById('result-card-' + type);
+  rc.style.display = 'flex';
+  document.getElementById('result-name-' + type).textContent = emp.name;
+  document.getElementById('result-sub-' + type).textContent = sub;
+  const av = document.getElementById('result-avatar-' + type);
+  av.className = 'avatar ' + emp.cls;
+  av.textContent = emp.av;
 }
 
 function renderAll() {
-  renderStats();
-  renderWhoGrid();
-  renderCalendar();
-  renderHistory();
+  renderStats(state.jobs, 'stat-grid-field', 'suggest-badge-field', 'stat-bar-field', 'lowest-field');
+  renderStats(state.ot, 'stat-grid-ot', 'suggest-badge-ot', 'stat-bar-ot', 'lowest-ot');
+  renderWhoGrid(state.jobs, 'who-grid-field', selectedField, 'selectFieldEmp', 'selected-field', 'suggest-star-field');
+  renderOTWhoGrid();
+  renderCalendar('field');
+  renderCalendar('ot');
+  renderHistory('field');
+  renderHistory('ot');
 }
 
-const MONTH_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-const DAY_TH = ['อา','จ','อ','พ','พฤ','ศ','ส'];
-
-function renderCalendar() {
-  document.getElementById('cal-month-label').textContent = MONTH_TH[calMonth] + ' ' + (calYear + 543);
-  const grid = document.getElementById('cal-grid');
+function renderCalendar(type) {
+  const yr = type === 'field' ? calFieldYear : calOTYear;
+  const mo = type === 'field' ? calFieldMonth : calOTMonth;
+  const data = type === 'field' ? state.jobs : state.ot;
+  document.getElementById('cal-month-' + type).textContent = MONTH_TH[mo] + ' ' + (yr + 543);
+  const grid = document.getElementById('cal-grid-' + type);
   grid.innerHTML = '';
   DAY_TH.forEach(d => {
     const el = document.createElement('div');
-    el.className = 'cal-day-label';
-    el.textContent = d;
+    el.className = 'cal-day-label'; el.textContent = d;
     grid.appendChild(el);
   });
-  const firstDow = new Date(calYear, calMonth, 1).getDay();
-  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  const prevDays = new Date(calYear, calMonth, 0).getDate();
+  const firstDow = new Date(yr, mo, 1).getDay();
+  const daysInMonth = new Date(yr, mo + 1, 0).getDate();
+  const prevDays = new Date(yr, mo, 0).getDate();
   const todayStr = new Date().toISOString().split('T')[0];
   const jobMap = {};
-  state.jobs.forEach(j => {
+  data.forEach(j => {
     const key = String(j.date).substring(0,10);
     if (!jobMap[key]) jobMap[key] = [];
     jobMap[key].push(j);
@@ -411,13 +530,16 @@ function renderCalendar() {
     grid.appendChild(cell);
   }
   for (let d = 1; d <= daysInMonth; d++) {
-    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const ds = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const jobs = jobMap[ds] || [];
     const cell = document.createElement('div');
-    cell.className = 'cal-cell' + (jobs.length ? ' has-event' : '') + (ds === todayStr ? ' today' : '');
+    const evtClass = jobs.length ? ` has-event-${type}` : '';
+    const todayClass = ds === todayStr ? ' today' : '';
+    cell.className = 'cal-cell' + evtClass + todayClass;
     let html = `<div class="cal-date">${d}</div>`;
     jobs.forEach(j => {
-      html += `<div class="cal-person">${j.employeeName}</div><div class="cal-event">${j.location}</div>`;
+      html += `<div class="cal-person ${type}">${j.employeeName}</div>`;
+      if (type === 'field') html += `<div class="cal-event">${j.location}</div>`;
     });
     cell.innerHTML = html;
     grid.appendChild(cell);
@@ -432,11 +554,17 @@ function renderCalendar() {
   }
 }
 
-function changeMonth(d) {
-  calMonth += d;
-  if (calMonth > 11) { calMonth = 0; calYear++; }
-  if (calMonth < 0) { calMonth = 11; calYear--; }
-  renderCalendar();
+function changeMonth(type, d) {
+  if (type === 'field') {
+    calFieldMonth += d;
+    if (calFieldMonth > 11) { calFieldMonth = 0; calFieldYear++; }
+    if (calFieldMonth < 0) { calFieldMonth = 11; calFieldYear--; }
+  } else {
+    calOTMonth += d;
+    if (calOTMonth > 11) { calOTMonth = 0; calOTYear++; }
+    if (calOTMonth < 0) { calOTMonth = 11; calOTYear--; }
+  }
+  renderCalendar(type);
 }
 
 function formatDate(d) {
@@ -444,28 +572,66 @@ function formatDate(d) {
   return dt.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'});
 }
 
-function renderHistory() {
-  const el = document.getElementById('history-list');
-  const jobs = [...state.jobs].sort((a,b) => String(b.date).localeCompare(String(a.date)));
-  if (!jobs.length) { el.innerHTML = '<div class="empty">ยังไม่มีประวัติงาน</div>'; return; }
+function renderHistory(type) {
+  const el = document.getElementById('history-' + type);
+  const data = type === 'field' ? state.jobs : state.ot;
+  const sorted = [...data].sort((a,b) => String(b.date).localeCompare(String(a.date)));
+  if (!sorted.length) { el.innerHTML = '<div class="empty">ยังไม่มีประวัติ</div>'; return; }
   const empMap = {};
   EMPLOYEES.forEach(e => empMap[e.name] = e);
-  el.innerHTML = jobs.slice(0,50).map(j => {
+  el.innerHTML = sorted.slice(0,50).map(j => {
     const emp = empMap[j.employeeName] || {av:(j.employeeName||'?')[0], cls:'av-b'};
+    const delFn = type === 'field' ? 'openDeleteModal' : 'openDeleteOTModal';
     return `<div class="hist-item">
-      <div class="avatar av-sm ${emp.cls}">${emp.av}</div>
+      <div class="av-sm ${emp.cls}">${emp.av}</div>
       <span class="hist-date">${formatDate(j.date)}</span>
-      <span class="hist-loc">${j.location}${j.note ? ' <span class="tag">'+j.note+'</span>' : ''}</span>
+      <span class="hist-loc">${type === 'field' ? j.location + (j.note ? ' <span class="tag">'+j.note+'</span>' : '') : ''}</span>
       <span class="hist-person">${j.employeeName}</span>
-      <button class="btn-icon" onclick="openDeleteModal('${j.id}')" title="ลบ"><i class="ti ti-trash"></i></button>
+      <button class="btn-icon" onclick="${delFn}('${j.id}')" title="ลบ"><i class="ti ti-trash"></i></button>
     </div>`;
   }).join('');
 }
 
+function openDeleteModal(id) {
+  const job = state.jobs.find(j => String(j.id) === String(id));
+  if (!job) return;
+  pendingDelete = job; deleteType = 'field';
+  document.getElementById('modal-job-info').innerHTML = `<strong>${job.location}</strong>${formatDate(job.date)} · ${job.employeeName}`;
+  document.getElementById('modal-delete').style.display = 'flex';
+}
+
+function openDeleteOTModal(id) {
+  const job = state.ot.find(j => String(j.id) === String(id));
+  if (!job) return;
+  pendingDelete = job; deleteType = 'ot';
+  document.getElementById('modal-job-info').innerHTML = `<strong>โอที</strong>${formatDate(job.date)} · ${job.employeeName}`;
+  document.getElementById('modal-delete').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modal-delete').style.display = 'none';
+  pendingDelete = null; deleteType = null;
+}
+
+async function confirmDelete() {
+  if (!pendingDelete) return;
+  const btn = document.getElementById('btn-confirm-delete');
+  btn.disabled = true;
+  try {
+    const action = deleteType === 'field' ? 'deleteJob' : 'deleteOT';
+    await fetch(API_URL + `?action=${action}&id=${pendingDelete.id}`);
+    closeModal();
+    await fetchAll();
+  } catch(e) { setSyncState('err', 'ลบไม่สำเร็จ'); }
+  btn.disabled = false;
+}
+
 const now = new Date();
-calYear = now.getFullYear();
-calMonth = now.getMonth();
-document.getElementById('inp-date').value = now.toISOString().split('T')[0];
+calFieldYear = calOTYear = now.getFullYear();
+calFieldMonth = calOTMonth = now.getMonth();
+const todayVal = now.toISOString().split('T')[0];
+document.getElementById('inp-date').value = todayVal;
+document.getElementById('inp-ot-date').value = todayVal;
 fetchAll();
 setInterval(fetchAll, 60000);
 </script>
