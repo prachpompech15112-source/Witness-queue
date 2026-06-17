@@ -463,7 +463,7 @@ async function addOT() {
     for (const emp of selectedOT) {
       await fetch(API_URL + '?action=addOT', {
         method: 'POST',
-        body: JSON.stringify({id: Date.now() + Math.random(), date, employeeName: emp.name})
+        body: JSON.stringify({id: Date.now() + '_' + emp.id, date, employeeName: emp.name})
       });
     }
     const names = selectedOT.map(e => e.name).join(', ');
