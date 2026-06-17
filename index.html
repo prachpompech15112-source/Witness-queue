@@ -601,7 +601,8 @@ function openDeleteModal(id) {
 }
 
 function openDeleteOTModal(id) {
-  const job = state.ot.find(j => String(j.id) === String(id));
+  const job = state.ot.find(j => String(j.id).trim() === String(id).trim());
+  console.log('delete id:', id, 'found:', job);
   if (!job) return;
   pendingDelete = job; deleteType = 'ot';
   document.getElementById('modal-job-info').innerHTML = `<strong>โอที</strong>${formatDate(job.date)} · ${job.employeeName}`;
